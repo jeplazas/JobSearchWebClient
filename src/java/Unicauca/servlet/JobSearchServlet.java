@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import Unicauca.client.JobSearchWS;
 import Unicauca.client.JobSearchWS_Service;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 /**
  *
@@ -44,7 +45,14 @@ public class JobSearchServlet extends HttpServlet {
             try{
                 JobSearchWS_Service service = new JobSearchWS_Service();
                 JobSearchWS port = service.getJobSearchWSPort();
-                String jobOffer = port.getJobOffer(request.getParameter("keyword"));
+                String jobOffer;
+                String keyword = request.getParameter("keyword");
+                try{
+                    jobOffer = port.getJobOffer(keyword);
+                } catch (Exception e){
+                    jobOffer = "Palabra '"+ keyword +"' Inválida... ¬¬";
+                }
+                
                 session.setAttribute("jobOffer", jobOffer);
                 nextPage = "/result.jsp";
                 reSend(request, response, nextPage);
